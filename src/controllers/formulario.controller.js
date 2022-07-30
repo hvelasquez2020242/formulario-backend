@@ -39,8 +39,9 @@ function agregarFormulario(req, res) {
                         if (ultimoValor == 1 && parametros.generoDePoesia == "dramatico") {
                             console.log('5 dias despues');
                             fecha = Number(fecha);
-                            fecha += 9 * 24 * 60 * 60 * 1000;
+                            fecha += 5 * 24 * 60 * 60 * 1000;
                             fecha = new Date(fecha)
+                            modeloFormulario.fechaDeDeclamacion = fecha.toLocaleDateString();
 
                             if (diasSemana[fecha.getDay()] == 'Sabado') {
                                 fecha = Number(fecha);
