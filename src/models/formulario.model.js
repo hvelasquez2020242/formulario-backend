@@ -7,11 +7,11 @@ const FormularioSchema = Schema({
     direccion: String,
     genero: String, 
     telefono: Number, 
-    fechaDeNacimiento: String, 
+    fechaDeNacimiento: Date, 
     carreraDelEstudiante: String,
     generoDePoesia: String,
     fechaDeInscripcion: String,
-    fechaDeDeclamacion: String
+    fechaDeDeclamacion: Date
 });
 
 module.exports = mongoose.model('Formulario', FormularioSchema);

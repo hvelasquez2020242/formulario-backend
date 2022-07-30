@@ -27,6 +27,7 @@ function agregarFormulario(req, res) {
                     return res.status(500).send({ mensaje: 'El tercer caracter tiene que ser un 5' })
                 } else {
                     if (ultimoValor == 1 || ultimoValor == 3 || ultimoValor == 9) {
+                       
                         modeloFormulario.carnet = parametros.carnet;
                         modeloFormulario.nombreCompleto = parametros.nombres + ' ' + parametros.apellidos;
                         modeloFormulario.direccion = parametros.direccion;
@@ -41,8 +42,9 @@ function agregarFormulario(req, res) {
                             fecha = Number(fecha);
                             fecha += 5 * 24 * 60 * 60 * 1000;
                             fecha = new Date(fecha)
-                            modeloFormulario.fechaDeDeclamacion = fecha.toLocaleDateString();
-
+                            
+                            modeloFormulario.fechaDeDeclamacion = fecha
+                            console.log(fecha.toLocaleDateString());
                             if (diasSemana[fecha.getDay()] == 'Sabado') {
                                 fecha = Number(fecha);
                                 fecha += 2 * 24 * 60 * 60 * 1000;
@@ -73,11 +75,13 @@ function agregarFormulario(req, res) {
                                     fecha = Number(fecha);
                                     fecha += 9 * 24 * 60 * 60 * 1000;
                                     fecha = new Date(fecha)
-                                    const ultimoDia = new Date(new Date().getFullYear(), new Date().getMonth() + 2, 0)
+                                    const ultimoDia = new Date(new Date().getFullYear(), new Date().getMonth() + 2, 0).getDate()
 
-
+                                    fecha = new Date(ultimoDia)
+                                    
                                     console.log(ultimoDia.toLocaleString() + diasSemana[ultimoDia.getDay()]);
-                                    modeloFormulario.fechaDeDeclamacion = ultimoDia.toLocaleDateString()                                }
+                                    modeloFormulario.fechaDeDeclamacion = ultimoDia.toLocaleDateString()
+                                }
                                 modeloFormulario.fechaDeDeclamacion = fecha.toLocaleDateString();
                                 console.log(ultimoDiaFecha + 'sabado');
                             } else if (diasSemana[ultimoDia] == 'Domingo') {
@@ -91,11 +95,13 @@ function agregarFormulario(req, res) {
                                 if (fechaActual >= fecha.getDate()) {
                                     fecha = Number(fecha);
                                     fecha += 9 * 24 * 60 * 60 * 1000;
+                                    console.log('es mayor');
+
                                     fecha = new Date(fecha)
                                     const ultimoDia = new Date(new Date().getFullYear(), new Date().getMonth() + 2, 0)
-
-                                    console.log(ultimoDia.toLocaleString() + diasSemana[ultimoDia.getDay()]);
-                                    modeloFormulario.fechaDeDeclamacion = ultimoDia.toLocaleDateString()
+                                    console.log(ultimoDia);
+                                    console.log(ultimoDia.toLocaleDateString() + diasSemana[ultimoDia.getDay()]);
+                                    modeloFormulario.fechaDeDeclamacion = ultimoDia
 
 
                                 }
@@ -104,24 +110,24 @@ function agregarFormulario(req, res) {
                             var curr = new Date;
                             const ultimoDia = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDay()
                             var firstday = new Date(curr.setDate(curr.getDate() - curr.getDay()));
-                            var lastday = new Date(curr.setDate(curr.getDate() - curr.getDay()+5));
-                             if(diasSemana[ultimoDia] == 'Sabado'){
+                            var lastday = new Date(curr.setDate(curr.getDate() - curr.getDay() + 5));
+                            if (diasSemana[ultimoDia] == 'Sabado') {
                                 fecha = Number(fecha);
                                 fecha += 2 * 24 * 60 * 60 * 1000;
                                 fecha = new Date(fecha)
-                                var lastday = new Date(fecha.setDate(fecha.getDate() - fecha.getDay()+5));
-                                modeloFormulario.fechaDeDeclamacion = lastday.toLocaleDateString()
+                                var lastday = new Date(fecha.setDate(fecha.getDate() - fecha.getDay() + 5));
+                                modeloFormulario.fechaDeDeclamacion = lastday
 
-                             }else if(diasSemana[ultimoDia] == 'Domingo'){
+                            } else if (diasSemana[ultimoDia] == 'Domingo') {
                                 fecha = Number(fecha);
                                 fecha += 1 * 24 * 60 * 60 * 1000;
                                 fecha = new Date(fecha)
-                                var lastday = new Date(fecha.setDate(fecha.getDate() - fecha.getDay()+5));
-                                modeloFormulario.fechaDeDeclamacion = lastday.toLocaleDateString()
+                                var lastday = new Date(fecha.setDate(fecha.getDate() - fecha.getDay() + 5));
+                                modeloFormulario.fechaDeDeclamacion = lastday
 
-                             }
+                            }
 
-                        }   
+                        }
                         modeloFormulario.save((err, formularioGuardado) => {
                             if (err) return res.status(500).send({ mensaje: 'Hubo un error en la peticion' })
                             if (!formularioGuardado) return res.status(404).send({ mensaje: 'Hubo un error al agregar el formulario' })
@@ -142,35 +148,56 @@ function agregarFormulario(req, res) {
     }
 
 }
-function obtenerReporte(req, res){
+function obtenerReporte(req, res) {
     const genero = req.params.genero;
-    Formulario.find({generoDePoesia: genero}, (err, reporteEncontrado)=>{
-        if(err) return res.status(500).send({mensaje: 'Hubo un error en la peticion'})
-        if(!reporteEncontrado) return res.status(404).send({mensaje: 'Hubo un error al obtener el reporte'})
-        return res.status(200).send({reporte: reporteEncontrado})
+    Formulario.find({ generoDePoesia: genero }, (err, reporteEncontrado) => {
+        if (err) return res.status(500).send({ mensaje: 'Hubo un error en la peticion' })
+        if (!reporteEncontrado) return res.status(404).send({ mensaje: 'Hubo un error al obtener el reporte' })
+        return res.status(200).send({ reporte: reporteEncontrado })
     })
 }
-function obtenerRepoderPorCarrera(req,res){
-    const carrera = req.params.carrera; 
-    Formulario.find({carreraDelEstudiante: carrera}, (err, reporteEncontrado)=>{
-        if(err) return res.status(500).send({mensaje: 'Hubo un error en la peticion'})
-        if(!reporteEncontrado) return res.status(404).send({mensaje: 'Hubo un error al obtener el reporte'})
-        return res.status(200).send({reporte: reporteEncontrado})
+function obtenerRepoderPorCarrera(req, res) {
+    const carrera = req.params.carrera;
+    Formulario.find({ carreraDelEstudiante: carrera }, (err, reporteEncontrado) => {
+        if (err) return res.status(500).send({ mensaje: 'Hubo un error en la peticion' })
+        if (!reporteEncontrado) return res.status(404).send({ mensaje: 'Hubo un error al obtener el reporte' })
+        return res.status(200).send({ reporte: reporteEncontrado })
     })
 }
-function obtnerReporteFecha(req, res){
+function obtnerReporteFecha(req, res) {
+    Formulario.find((err, formulariosEncontrados) => {
+        if (err) return res.status(500).send({ mensaje: 'Hubo un error en la peticion' })
+        if (!formulariosEncontrados) return res.status(404).send({ mensaje: 'Hubo un error al obtener el reporte' })
+        return res.status(200).send({ reporte: formulariosEncontrados })
+    }).sort({ fechaDeDeclamacion: -1 })
+}
+
+function obtnerReporteEdad(req, res) {
+    Formulario.find((err, formulariosEncontrados) => {
+        if (err) return res.status(500).send({ mensaje: 'Hubo un error en la peticion' })
+        if (!formulariosEncontrados) return res.status(404).send({ mensaje: 'Hubo un error al obtener el reporte' })
+        return res.status(200).send({ reporte: formulariosEncontrados})
+    }).sort({fechaDeNacimiento: -1})
+
+} 
+function obtnerTiposDeCarrera(req, res){
     Formulario.find((err, formulariosEncontrados)=>{
+        const valor = [];
+
         if(err) return res.status(500).send({mensaje: 'Hubo un error en la peticion'})
-        if(!formulariosEncontrados) return res.status(404).send({mensaje: 'Hubo un error al obtener el reporte'})
-        return res.status(200).send({reporte: formulariosEncontrados})
-    }).sort({fechaDeDeclamacion: -1})
+        if(!formulariosEncontrados) return res.status(404).send({mensaje: 'Hubo un error al obtner el formulario'})
+        for (let i = 0; i < formulariosEncontrados.length; i++) {
+            valor.push({nombre: formulariosEncontrados[i].carreraDelEstudiante})
+        }
+        return res.status(200).send({carreras: valor})
+    })
 }
-
-
 module.exports = {
     obtnerFormularios,
+    obtnerTiposDeCarrera,
     agregarFormulario,
     obtenerReporte,
     obtenerRepoderPorCarrera,
     obtnerReporteFecha,
+    obtnerReporteEdad
 }
