@@ -183,15 +183,16 @@ function obtnerReporteEdad(req, res) {
 function obtnerTiposDeCarrera(req, res){
     Formulario.find((err, formulariosEncontrados)=>{
         const valor = [];
-
         if(err) return res.status(500).send({mensaje: 'Hubo un error en la peticion'})
         if(!formulariosEncontrados) return res.status(404).send({mensaje: 'Hubo un error al obtner el formulario'})
         for (let i = 0; i < formulariosEncontrados.length; i++) {
+
             valor.push({nombre: formulariosEncontrados[i].carreraDelEstudiante})
         }
         return res.status(200).send({carreras: valor})
     })
 }
+
 module.exports = {
     obtnerFormularios,
     obtnerTiposDeCarrera,
